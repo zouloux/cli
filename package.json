@@ -1,0 +1,52 @@
+{
+  "name": "@zouloux/cli",
+  "version": "0.1.0",
+  "description": "",
+  "main": "./dist/index.es2017.cjs",
+  "module": "./dist/index.es2020.mjs",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "reset": "rm -rf node_modules && npm i",
+    "clean": "rm -rf dist",
+    "build": "tsbundle build",
+    "publish": "tsbundle publish"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zouloux/cli.git"
+  },
+  "keywords": [
+    "dom",
+    "library"
+  ],
+  "author": "Alexis Bouhet - ZoulouX",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zouloux/cli/issues"
+  },
+  "homepage": "https://github.com/zouloux/cli#readme",
+  "devDependencies": {
+    "@types/node": "^18.0.3",
+    "@zouloux/tsbundle": "^1.2.17"
+  },
+  "dependencies": {
+    "@types/ora": "^3.2.0",
+    "@zouloux/ecma-core": "^0.1.0",
+    "chalk": "^5.0.1",
+    "mri": "^1.2.0",
+    "ora": "^6.1.2",
+    "strip-ansi": "^7.0.1"
+  },
+  "tsbundle": {
+    "files": [
+      {
+        "output": "./dist/",
+        "input": "./src/index.ts",
+        "formats": [
+          "es2020.mjs",
+          "es2017.cjs"
+        ]
+      }
+    ]
+  }
+}
