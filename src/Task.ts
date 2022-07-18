@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { indent, repeat } from "@solid-js/core";
+import { indent, repeat } from "@zouloux/ecma-core";
 import { cliTabSize, newLine } from "./Output";
 
 

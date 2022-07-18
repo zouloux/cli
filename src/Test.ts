@@ -1,6 +1,6 @@
 // TODO : Refacto with OraTask
 import { createTask, ITask } from "./Task";
-import { compareWithOperator, repeat, TCompareOperators } from "@solid-js/core"
+import { compareWithOperator, repeat, TCompareOperators } from "@zouloux/ecma-core"
 import chalk from "chalk";
 import { newLine } from "./Output";
 
