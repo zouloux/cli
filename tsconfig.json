@@ -5,6 +5,7 @@
 		"moduleResolution": "node",
 		"lib": ["DOM", "ESNext"],
 		"types": [ "node" ],
+		"allowJs": true,
 		"allowSyntheticDefaultImports": true
 	},
 }

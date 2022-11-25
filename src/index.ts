@@ -6,3 +6,4 @@ export * from "./Output";
 export * from "./Process";
 export * from "./Ssh";
 export * from "./Test";
+export * from "./Arguments";

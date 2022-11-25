@@ -1,6 +1,6 @@
-import { getCLIArguments } from "./Command";
 import { nicePrint } from "./Output";
-import { AnyHandler, ScalarObject } from "@zouloux/ecma-core";
+import { ScalarObject } from "@zouloux/ecma-core";
+import { parseArguments } from "./Arguments";
 
 // ----------------------------------------------------------------------------- STRUCT
 
@@ -35,10 +35,9 @@ export async function askList ( message:string, choices:ScalarObject|string[], o
 {
 	// Init Inquirer and get CLI argument & options
 	const Inquirer = require('inquirer');
-	const [ cliArguments, cliOptions ] = getCLIArguments();
-
+	const args = parseArguments()
+	// Local helpers
 	const isNotSep = entry => !( typeof entry === 'string' && entry === '---' )
-
 	const returnValue = r => {
 		if ( !options.returnType || options.returnType == 'all' )
 			return r
@@ -49,31 +48,24 @@ export async function askList ( message:string, choices:ScalarObject|string[], o
 		if ( options.returnType == 'key' )
 			return r[2] ?? r[0]
 	}
-
 	// Get choices keys and values, from array or scalar object
 	const choicesKeys = Object.keys( choices ).filter( isNotSep );
 	const choicesValues = (Array.isArray( choices ) ? choices : Object.values( choices ))
-
 	// Target keys to compare to arguments
 	const argumentCompare = (Array.isArray( choices ) ? choices : choicesKeys).filter( isNotSep );
-
 	// Default index is a string if choices is a scalar object
 	if ( options.defaultIndex && !Array.isArray( choices ) )
 		options.defaultIndex = choicesKeys.indexOf( options.defaultIndex as string );
-
 	// Selected choice and index
 	let selectedChoice = null;
 	let selectedIndex = -1;
-
 	// Check CLI options shortcuts if we have some
 	options.shortcuts && options.shortcuts.map( shortcut => {
-		// Do not continue if already selected or shortcuts is not in args
+		// Do not continue if already selected or shortcuts is not in args flags
 		if ( selectedChoice ) return;
-		if ( !cliOptions[ shortcut ] ) return;
-
+		if ( !args.flags[ shortcut ] ) return;
 		// Convert received shortcut to lower case
-		const lower = (cliOptions[ shortcut ] + '').toLowerCase();
-
+		const lower = (args.flags[ shortcut ] + '').toLowerCase();
 		// Browse choices to get closer one
 		argumentCompare.map( (choiceKey, i) => {
 			if ( selectedChoice ) return;
@@ -82,13 +74,10 @@ export async function askList ( message:string, choices:ScalarObject|string[], o
 			selectedChoice = choiceKey;
 		});
 	});
-
 	// Check CLI argument index
-	if ( !selectedChoice && options.argumentIndex >= 0 && options.argumentIndex in cliArguments )
-	{
+	if ( !selectedChoice && options.argumentIndex >= 0 && options.argumentIndex in args.arguments ) {
 		// Convert received shortcut to lower case
-		const argShortcut = cliArguments[ options.argumentIndex ].toLowerCase();
-
+		const argShortcut = args.arguments[ options.argumentIndex ].toLowerCase();
 		let indexCounter = -1;
 		argumentCompare.map( (choiceKey, i) => {
 			if ( selectedChoice ) return;
@@ -98,16 +87,13 @@ export async function askList ( message:string, choices:ScalarObject|string[], o
 			selectedChoice = choiceKey
 		});
 	}
-
 	// Return selected choice
 	if ( selectedChoice )
 		return returnValue([ selectedIndex, selectedChoice ])
-
 	// Replace separators
 	const choicesWithSeparators = choicesValues.map( entry => (
 		isNotSep( entry ) ? entry : new Inquirer.Separator()
 	));
-
 	// No choice found in arguments, ask CLI
 	const question = await Inquirer.prompt({
 		message: nicePrint(message, {
@@ -121,9 +107,8 @@ export async function askList ( message:string, choices:ScalarObject|string[], o
 		choices: choicesWithSeparators,
 		default: options.defaultIndex ?? null
 	});
-
 	// Get answer and its index
-	const {answer} = question;
+	const { answer } = question;
 	selectedIndex = choicesValues.filter( isNotSep ).indexOf( answer );
 	return returnValue([ selectedIndex, answer, choicesKeys[selectedIndex] ])
 }
@@ -147,35 +132,28 @@ export async function askInput ( message, options:Partial<TAskInputOptions> = {}
 		notEmpty: false,
 		...options
 	}
-
 	// Init Inquirer and get CLI argument & options
 	const Inquirer = require('inquirer');
-	const [ args, argsOpts ] = getCLIArguments();
-
+	const args = parseArguments();
 	// Selected input
 	let selectedInput;
-
 	// Browse all shortcuts
 	options.shortcuts && options.shortcuts.map( shortcut => {
 		// Do not continue if corresponding argument has been found
 		if ( selectedInput ) return;
-
-		// Check if argument is found and has correct type
-		const argShortcut = argsOpts[ shortcut ];
+		// Check if flag is found and has correct type
+		const argShortcut = args.flags[ shortcut ];
 		if ( typeof argShortcut === (options.isNumber ? 'number' : 'string') )
 			selectedInput = argShortcut;
 	});
-
 	// Check CLI argument index
-	if ( !selectedInput && options.argumentIndex >= 0 && options.argumentIndex in args ) {
-		const argShortcut = args[ options.argumentIndex ];
+	if ( !selectedInput && options.argumentIndex >= 0 && options.argumentIndex in args.arguments ) {
+		const argShortcut = args.arguments[ options.argumentIndex ];
 		if ( typeof argShortcut === (options.isNumber ? 'number' : 'string') )
 			selectedInput = argShortcut;
 	}
-
 	// Loop to repeat if not satisfied by answer
-	while ( true )
-	{
+	while ( true ) {
 		// If input has not been found in arguments
 		if ( !selectedInput ) {
 			// Ask to CLI
@@ -189,11 +167,9 @@ export async function askInput ( message, options:Partial<TAskInputOptions> = {}
 					output: 'return'
 				})
 			});
-
 			// Convert type
 			selectedInput = ( options.isNumber ? parseFloat( question.answer ) : question.answer );
 		}
-
 		// Detect not satisfying values
 		if ( options.notEmpty && (options.isNumber ? isNaN(selectedInput) : selectedInput.length === 0) ) {
 			selectedInput = false;
@@ -202,7 +178,6 @@ export async function askInput ( message, options:Partial<TAskInputOptions> = {}
 		// We can exit loop return value
 		else break;
 	}
-
 	// Return selected input
 	return selectedInput;
 }
