@@ -1,6 +1,7 @@
 import { untab, indent, repeat } from "@zouloux/ecma-core";
 const chalk = require('chalk');
 import stripAnsi from 'strip-ansi';
+import { execSync } from "child_process";
 
 /**
  * Size of a tab for every CLI function.
@@ -283,4 +284,9 @@ export function table ( lines:string[][], firstLineAreLabels = false, minColumnW
 	});
 
 	return columnPositions;
+}
+
+
+export function clearScreen ( useProcess = true ) {
+	useProcess ? execSync(`clear`) : console.clear()
 }
