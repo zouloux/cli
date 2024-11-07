@@ -145,7 +145,7 @@ export function oraTask ( taskOptions:Partial<IOraTaskOptions>|string, handler:(
 		loader.start();
 		const textAndAfter = ( text:string, after?:string ) => (
 			after
-			? nicePrint(`${text}{d} - ${after}`, { output: 'return' })
+			? nicePrint(`${text}{d} - ${after}{/}`, { output: 'return' })
 			: text
 		)
 		const taskUpdater:ITaskUpdater = {
