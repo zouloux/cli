@@ -143,6 +143,11 @@ export function oraTask ( taskOptions:Partial<IOraTaskOptions>|string, handler:(
 	return new Promise( async (resolve, reject) => {
 		const loader = ora( options )
 		loader.start();
+		const textAndAfter = ( text:string, after?:string ) => (
+			after
+			? nicePrint(`${text}{d} - ${after}`, { output: 'return' })
+			: text
+		)
 		const taskUpdater:ITaskUpdater = {
 			// Text and after text
 			setText ( text:string ) {
@@ -165,17 +170,17 @@ export function oraTask ( taskOptions:Partial<IOraTaskOptions>|string, handler:(
 				this.updateLoader();
 			},
 			// End
-			success ( text ) {
-				loader.succeed( text )
+			success ( text, after?:string ) {
+				loader.succeed( textAndAfter(text, after) )
 			},
-			error ( text ) {
-				loader.fail( text )
+			error ( text, after?:string ) {
+				loader.fail( textAndAfter(text, after) )
 			},
-			warning ( text ) {
-				loader.warn( text )
+			warning ( text, after?:string ) {
+				loader.warn( textAndAfter(text, after) )
 			},
-			info ( text ) {
-				loader.info( text )
+			info ( text, after?:string ) {
+				loader.info( textAndAfter(text, after) )
 			},
 			// Update state
 			updateLoader () {
