@@ -145,7 +145,7 @@ export function oraTask ( taskOptions:Partial<IOraTaskOptions>|string, handler:(
 		loader.start();
 		const textAndAfter = ( text:string, after?:string ) => (
 			after
-			? nicePrint(`${text}{d} - ${after}{/}`, { output: 'return' })
+			? nicePrint(`${text}{d} - ${after}{/}`, { output: 'return', newLine: false })
 			: text
 		)
 		const taskUpdater:ITaskUpdater = {
@@ -194,7 +194,7 @@ export function oraTask ( taskOptions:Partial<IOraTaskOptions>|string, handler:(
 				}
 				// Add dimmed after text
 				if ( options.afterText ) {
-					text += nicePrint(`{d}${options.progress ? ' ' : ' - '}${options.afterText}`, { output: 'return' })
+					text += nicePrint(`{d}${options.progress ? ' ' : ' - '}${options.afterText}`, { output: 'return', newLine: false })
 				}
 				loader.text = text
 			},
