@@ -21,10 +21,10 @@ interface ITaskUpdater
 	setAfterText (text?:string, limit?:number)
 	setProgress (value:number, total?:number, width?:number)
 	clearProgress ()
-	success (text?:string)
-	error (text?:string)
-	warning (text?:string)
-	info (text?:string)
+	success (text?:string, after?:string)
+	error (text?:string, after?:string)
+	warning (text?:string, after?:string)
+	info (text?:string, after?:string)
 	updateLoader ()
 	getText ():string
 }
