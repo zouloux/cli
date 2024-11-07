@@ -26,6 +26,7 @@ interface ITaskUpdater
 	warning (text?:string)
 	info (text?:string)
 	updateLoader ()
+	getText ():string
 }
 
 interface IOraExecError extends IExecStreamResult {
@@ -192,6 +193,9 @@ export function oraTask ( taskOptions:Partial<IOraTaskOptions>|string, handler:(
 				}
 				loader.text = text
 			},
+			getText () {
+				return options.text
+			}
 		}
 		try {
 			const result = await handler( taskUpdater );
