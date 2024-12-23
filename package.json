@@ -1,6 +1,6 @@
 {
   "name": "@zouloux/cli",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "",
   "main": "./dist/index.es2017.cjs",
   "module": "./dist/index.es2020.mjs",

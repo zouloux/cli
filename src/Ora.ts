@@ -134,7 +134,7 @@ export function printLoaderLine ( content:string, oraOptions? )
 /**
  * TODO : DOC
  */
-export function oraTask ( taskOptions:Partial<IOraTaskOptions>|string, handler:(taskUpdater?:ITaskUpdater) => any|void, onError?:(e) => void ) {
+export function oraTask ( taskOptions:Partial<IOraTaskOptions>|string, handler:(taskUpdater?:ITaskUpdater) => any|void, onError?:(e:Error, taskUpdater:ITaskUpdater) => void ) {
 	const options:Partial<IOraTaskOptions> = (
 		( typeof taskOptions === "string" )
 		? { text: taskOptions }
@@ -213,7 +213,7 @@ export function oraTask ( taskOptions:Partial<IOraTaskOptions>|string, handler:(
 		catch ( e ) {
 			options.errorText && loader.fail( options.errorText )
 			if ( onError )
-				onError?.( e )
+				onError?.( e, taskUpdater )
 			else if ( e instanceof Object )
 				reject({ ...e, taskUpdater })
 			else
